@@ -14,7 +14,6 @@ public class ReverseClassLoader extends ClassLoader {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.println("Exception");
             e.printStackTrace();
         }
     }
@@ -26,21 +25,26 @@ public class ReverseClassLoader extends ClassLoader {
             byte[] bytes = decode(reverseClassFile);
             return defineClass(name, bytes, 0, bytes.length);
         } catch (Exception e) {
-            // return null;
+            return super.findClass(name);
         }
-
-        return null;
     }
 
     public byte[] decode(String reverseClassFile) throws Exception {
         // 字节反转 255-byte
-        DataInputStream in = new DataInputStream(new FileInputStream(reverseClassFile));
-        int len = in.available(); // length in bytes
-        byte[] rBytes = new byte[len];
-        for (int i = 0; i < len; i++) {
-            byte b = in.readByte();
-            rBytes[i] = (byte)(255 - b);
+        DataInputStream in = null;
+        try {
+            in = new DataInputStream(new FileInputStream(reverseClassFile));
+            int len = in.available(); // length in bytes
+            byte[] rBytes = new byte[len];
+            for (int i = 0; i < len; i++) {
+                byte b = in.readByte();
+                rBytes[i] = (byte)(255 - b);
+            }
+            return rBytes;
+        } finally {
+            if (null != in) {
+                in.close();
+            }
         }
-        return rBytes;
     }
 }
