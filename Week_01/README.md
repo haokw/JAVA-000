@@ -1,6 +1,6 @@
 # 学习笔记
 
-#### 提示了这个警告怎么解决？
+### 提示了这个警告怎么解决？
 
 ```java
 ➜  Week_01 git:(main) ✗ javac -Xlint ReverseClassLoader.java
