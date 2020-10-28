@@ -831,3 +831,7 @@ Transfer/sec:      5.04MB
 
 2、写一段代码，使用 HttpClient 或 OkHttp 访问 http://localhost:8801，代码提交到 github。
 ```
+
+#### 解答
+
+详情见 [netty-client](netty-client)

@@ -1,13 +1,17 @@
-package io.github.kimmking.netty.client;
+package io.netty.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.CharsetUtil;
 
 import java.util.logging.Logger;
 
-public class HttpClientHandler extends ChannelHandlerAdapter {
+public class HttpClientHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = Logger.getLogger(HttpClientHandler.class.getName());
 
@@ -29,11 +33,16 @@ public class HttpClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] req = new byte[buf.readableBytes()];
-        buf.readBytes(req);
-        String body = new String(req, "UTF-8");
-        System.out.println("Now is : " + body);
+        if (msg instanceof HttpResponse) {
+            HttpResponse response = (HttpResponse) msg;
+            System.out.println("CONTENT_TYPE:" + response.headers().get(HttpHeaders.Names.CONTENT_TYPE));
+        }
+        if (msg instanceof HttpContent) {
+            HttpContent content = (HttpContent) msg;
+            ByteBuf buf = content.content();
+            System.out.println(buf.toString(CharsetUtil.UTF_8));
+            buf.release();
+        }
     }
 
     @Override
