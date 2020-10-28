@@ -1,0 +1,10 @@
+堆区内存越大，GC 次数越少
+- SerialGC 平均在 30ms，内存在 4g 时，GC 达到 200ms
+- ParallelGC 平均 20ms，内存在 4g 时，GC 达到 150ms
+- ConcMarkSweepGC  内存 512m 时，10ms 以内，内存在 4g 时，只触发了 Young 区 ParNew GC 达到 100ms
+- G1GC 平均 10 ms，内存在 4g 时，GC 达到 50ms
+
+- SerialGC 压测，竟然也数据优秀
+- ParallelGC 压测，吞吐量明显提升
+- ConcMarkSweepGC 压测，吞吐量明显提升
+- G1GC 压测，吞吐量明显下降
