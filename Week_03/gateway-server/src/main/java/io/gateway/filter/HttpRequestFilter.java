@@ -1,10 +1,11 @@
-package io.github.kimmking.gateway.filter;
+package io.gateway.filter;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
+
 
 public interface HttpRequestFilter {
-    
-    void filter(FullHttpRequest fullRequest, ChannelHandlerContext ctx);
-    
+    static public void filter(HttpRequest Request, ChannelHandlerContext ctx) {
+        return;
+    }
 }

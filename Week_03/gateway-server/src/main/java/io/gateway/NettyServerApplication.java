@@ -3,6 +3,7 @@ package io.gateway;
 import io.gateway.inbound.HttpInboundHandler;
 import io.gateway.inbound.HttpInboundServer;
 
+
 public class NettyServerApplication {
 
     public final static String GATEWAY_NAME = "NIOGateway";
@@ -24,7 +25,7 @@ public class NettyServerApplication {
         System.out.println(GATEWAY_NAME + " " + GATEWAY_VERSION + " started at http://localhost:" + port + " for server:" + proxyServer);
         try {
             server.run();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

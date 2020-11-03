@@ -18,7 +18,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 
-// TODO Gateway client response 如何返回到 Gateway server
 public class HttpOutboundHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = Logger.getLogger(HttpOutboundHandler.class.getName());

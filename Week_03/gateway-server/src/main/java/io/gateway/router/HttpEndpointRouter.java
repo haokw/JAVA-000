@@ -1,9 +1,8 @@
-package io.github.kimmking.gateway.router;
+package io.gateway.router;
 
-import java.util.List;
 
 public interface HttpEndpointRouter {
-    
-    String route(List<String> endpoints);
-    
+    static public String route(String url) {
+        return url + "/api/hello";
+    };
 }

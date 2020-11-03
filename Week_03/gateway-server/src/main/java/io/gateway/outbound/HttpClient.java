@@ -3,7 +3,9 @@ package io.gateway.outbound;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Response;
+
 import java.nio.charset.Charset;
+
 import static org.asynchttpclient.Dsl.asyncHttpClient;
 
 
@@ -16,5 +18,4 @@ public class HttpClient {
 
         return response.getResponseBody().toString().getBytes(Charset.forName("ASCII"));
     }
-
 }

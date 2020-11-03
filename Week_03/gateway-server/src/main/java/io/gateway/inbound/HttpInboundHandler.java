@@ -1,13 +1,14 @@
 package io.gateway.inbound;
 
+import io.gateway.filter.HttpRequestFilter;
 import io.gateway.outbound.HttpClient;
+import io.gateway.router.HttpEndpointRouter;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
-import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +39,14 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
             HttpRequest request = (HttpRequest) msg;
 
             // filter
+            HttpRequestFilter.filter(request, ctx);
 
             // router
+            String url = HttpEndpointRouter.route(this.proxyServer);
 
             // 转发请求获取响应
             byte[] content = "not find server".getBytes();
-            content = HttpClient.getResponse(this.proxyServer + "/api/hello");
+            content = HttpClient.getResponse(url);
 
             // System.out.println("content: " + content);
 
@@ -74,9 +77,9 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-     @Override
-     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-         cause.printStackTrace();
-         ctx.close();
-     }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+     cause.printStackTrace();
+     ctx.close();
+    }
 }
