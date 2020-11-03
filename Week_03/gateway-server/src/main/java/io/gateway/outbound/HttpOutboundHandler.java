@@ -45,7 +45,7 @@ public class HttpOutboundHandler extends ChannelInboundHandlerAdapter {
 
         try {
             ctx.write(response);
-        } catch(Exception e) {
+        } catch (Exception e) {
             // logger.error("处理测试接口出错", e);
         }
     }

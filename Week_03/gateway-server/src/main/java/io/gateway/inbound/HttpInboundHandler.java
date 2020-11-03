@@ -1,20 +1,26 @@
 package io.gateway.inbound;
 
 import io.gateway.outbound.HttpClient;
-import io.gateway.outbound.HttpOutboundHandler;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpHeaderValues.*;
+import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 
 public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(HttpInboundHandler.class);
     private final String proxyServer;
-    private HttpOutboundHandler handler;
 
     public HttpInboundHandler(String proxyServer) {
         this.proxyServer = proxyServer;
@@ -26,55 +32,51 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        try {
-            // logger.info("channelRead流量接口请求开始，时间为{}", startTime);
-            FullHttpRequest fullRequest = (FullHttpRequest) msg;
-            // String uri = fullRequest.uri();
-            // //logger.info("接收到的请求url为{}", uri);
-            // if (uri.contains("/test")) {
-            //     handlerTest(fullRequest, ctx);
-            // }
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (msg instanceof HttpRequest) {
+            // 获取请求
+            HttpRequest request = (HttpRequest) msg;
 
-            HttpClient httpClient = new HttpClient();
-            try {
-                httpClient.connect(this.proxyServer, fullRequest);
-            } catch(Exception e) {
-                e.printStackTrace();
+            // filter
+
+            // router
+
+            // 转发请求获取响应
+            byte[] content = "not find server".getBytes();
+            content = HttpClient.getResponse(this.proxyServer + "/api/hello");
+
+            // System.out.println("content: " + content);
+
+            // 响应消息
+            boolean keepAlive = HttpUtil.isKeepAlive(request);
+            FullHttpResponse response = new DefaultFullHttpResponse(request.protocolVersion(), OK, Unpooled.wrappedBuffer(content));
+            response.headers().set(CONTENT_TYPE, TEXT_PLAIN).setInt(CONTENT_LENGTH, response.content().readableBytes());
+
+            if (keepAlive) {
+                if (!request.protocolVersion().isKeepAliveDefault()) {
+                    response.headers().set(CONNECTION, KEEP_ALIVE);
+                }
+            } else {
+                response.headers().set(CONNECTION, CLOSE);
             }
-        } catch(Exception e) {
-            e.printStackTrace();
-        } finally {
-            ReferenceCountUtil.release(msg);
+
+            // 回复响应
+            ctx.channel().writeAndFlush(response).addListeners(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                    if (channelFuture.isSuccess()) {
+                        ctx.channel().read();
+                    } else {
+                        channelFuture.channel().close();
+                    }
+                }
+            });
         }
     }
 
-    // private void handlerTest(FullHttpRequest fullRequest, ChannelHandlerContext ctx) {
-    //     FullHttpResponse response = null;
-    //     try {
-    //         String value = "hello,kimmking";
-    //         response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(value.getBytes("UTF-8")));
-    //         response.headers().set("Content-Type", "application/json");
-    //         response.headers().setInt("Content-Length", response.content().readableBytes());
-
-    //     } catch(Exception e) {
-    //         logger.error("处理测试接口出错", e);
-    //         response = new DefaultFullHttpResponse(HTTP_1_1, NO_CONTENT);
-    //     } finally {
-    //         if (fullRequest != null) {
-    //             if (!HttpUtil.isKeepAlive(fullRequest)) {
-    //                 ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-    //             } else {
-    //                 response.headers().set(CONNECTION, KEEP_ALIVE);
-    //                 ctx.write(response);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // @Override
-    // public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    //     cause.printStackTrace();
-    //     ctx.close();
-    // }
+     @Override
+     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+         cause.printStackTrace();
+         ctx.close();
+     }
 }
