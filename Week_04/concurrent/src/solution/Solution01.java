@@ -1,6 +1,10 @@
 package solution;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Solution01 {
@@ -8,6 +12,10 @@ public class Solution01 {
         goSolution1();
         goSolution2();
         goSolution3();
+        goSolution4();
+        goSolution5();
+        goSolution6();
+        goSolution7();
 
         System.out.println("main return");
     }
@@ -60,6 +68,76 @@ public class Solution01 {
         long end = System.currentTimeMillis();
         System.out.printf("time consuming : %s ms\n", (end - start));
     }
+
+    public static void goSolution4() throws InterruptedException {
+        long start = System.currentTimeMillis();
+
+        final SynchronizedMethod sm = new SynchronizedMethod();
+        Thread t = new Thread(()->{
+            sm.run();
+        });
+        t.start();
+        System.out.printf("result : %s\n", sm.getResult());
+        System.out.println("goSolution4 return");
+
+        long end = System.currentTimeMillis();
+        System.out.printf("time consuming : %s ms\n", (end - start));
+    }
+
+    public static void goSolution5() throws InterruptedException {
+        long start = System.currentTimeMillis();
+
+        final SynchronizedMethod sm = new SynchronizedMethod();
+        Thread t = new Thread(()->{
+            sm.run();
+        });
+        t.start();
+        System.out.printf("result : %s\n", sm.getResult());
+        System.out.println("goSolution5 return");
+
+        long end = System.currentTimeMillis();
+        System.out.printf("time consuming : %s ms\n", (end - start));
+    }
+
+    public static void goSolution6() throws InterruptedException {
+        long start = System.currentTimeMillis();
+
+        final SemaphoreMethod sm = new SemaphoreMethod();
+        Thread t = new Thread(()->{
+            try {
+                sm.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+        t.join();
+        System.out.printf("result : %s\n", sm.getResult());
+        System.out.println("goSolution6 return");
+
+        long end = System.currentTimeMillis();
+        System.out.printf("time consuming : %s ms\n", (end - start));
+    }
+
+    public static void goSolution7() throws InterruptedException {
+        long start = System.currentTimeMillis();
+
+        final LockConditionMethod lc = new LockConditionMethod();
+        Thread t = new Thread(()->{
+            try {
+                lc.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+        t.join();
+        System.out.printf("result : %s\n", lc.getResult());
+        System.out.println("goSolution7 return");
+
+        long end = System.currentTimeMillis();
+        System.out.printf("time consuming : %s ms\n", (end - start));
+    }
 }
 
 class MyMethod {
@@ -86,6 +164,76 @@ class MyRunnable implements Runnable {
     }
 
     public String getResult() {
+        return result;
+    }
+}
+
+class SynchronizedMethod {
+    private volatile String result = null;
+
+    synchronized public String run() {
+        result = "run thread";
+        System.out.println("thread return");
+        notifyAll();
+        return result;
+    }
+
+    synchronized public String getResult() throws InterruptedException {
+        while (result == null) {
+            wait();
+        }
+        return result;
+    }
+}
+
+class SemaphoreMethod {
+    final Semaphore s = new Semaphore(1);
+    private volatile String result = null;
+
+    public String run() throws InterruptedException {
+        s.acquire();
+        // Thread.sleep(1000);
+        result = "run thread";
+        System.out.println("thread return");
+        s.release();
+        return result;
+    }
+
+    public String getResult() throws InterruptedException {
+        try {
+            s.acquire();
+            return result;
+        } finally {
+            s.release();
+        }
+    }
+}
+
+class LockConditionMethod {
+    private Lock lock = new ReentrantLock();
+    private Condition con = lock.newCondition();
+    private volatile String result = null;
+
+    public String run() throws InterruptedException {
+        lock.lock();
+        try {
+            result = "run thread";
+            System.out.println("thread return");
+        } finally {
+            lock.unlock();
+        }
+        return result;
+    }
+
+    public String getResult() throws InterruptedException {
+        lock.lock();
+        try {
+            while (result == null) {
+                con.await();
+            }
+        } finally {
+            lock.unlock();
+        }
         return result;
     }
 }
