@@ -1,7 +1,9 @@
-package com.home;
+package com.home.administration;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.home.administration.service.User;
+import com.home.administration.service.UserService;
 
 public class Main {
     public static void main(String[] args) {
