@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class GenerateRecord {
 //    public int count=0;
-    // 耗时 406587 毫秒
+    // 耗时 406587 毫秒 409454 446250
     public void generateMillionRecordWithJDBC(){
         Connection conn = null;
         Statement stmt = null;
@@ -49,7 +49,7 @@ public class GenerateRecord {
         }
 
     }
-    // 耗时：446490
+    // 耗时：446490 396125 430771
     public void generateMillionRecordWithJDBCBatch(){
         String sql = "insert into tbl_order(price,utime,address,number,user_id)values(?,UNIX_TIMESTAMP(),'~',?,?)";
         Connection conn = null;

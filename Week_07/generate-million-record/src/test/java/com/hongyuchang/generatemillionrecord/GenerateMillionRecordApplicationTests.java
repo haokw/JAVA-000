@@ -10,8 +10,8 @@ class GenerateMillionRecordApplicationTests {
 	@Test
 	void contextLoads() {
 		GenerateRecord gr = new GenerateRecord();
-		gr.generateMillionRecordWithJDBC();
-// 		gr.generateMillionRecordWithJDBCBatch();
+		// gr.generateMillionRecordWithJDBC();
+		gr.generateMillionRecordWithJDBCBatch();
 	}
 
 }
