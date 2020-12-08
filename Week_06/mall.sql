@@ -55,6 +55,7 @@ CREATE TABLE `tbl_order` (
   `address` varchar(128) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '订单地址',
   `utime` bigint NOT NULL DEFAULT '0' COMMENT '更新时间',
   `crime` bigint NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户ID',
   PRIMARY KEY (`id`),
   KEY `idx_status` (`status`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
