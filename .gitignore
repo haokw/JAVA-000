@@ -6,6 +6,8 @@ target/
 *.idea
 *.iml
 *.mvn
+*.cmd
+mvnw
 
 *.settings
 *.classpath
