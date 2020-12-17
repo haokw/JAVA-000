@@ -1,14 +1,11 @@
-package com.hongyuchang.generatemillionrecord;
+package com.hao.generatemillionrecord;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class GenerateMillionRecordApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(GenerateMillionRecordApplication.class, args);
-
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(GenerateMillionRecordApplication.class, args);
+    }
 }

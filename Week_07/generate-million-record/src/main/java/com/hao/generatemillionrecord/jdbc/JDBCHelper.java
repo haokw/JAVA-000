@@ -1,4 +1,4 @@
-package com.hongyuchang.generatemillionrecord.jdbc;
+package com.hao.generatemillionrecord.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,7 +12,8 @@ public class JDBCHelper {
     private static final String PASSWORD = "";
     private static Connection connection;
 
-    private JDBCHelper() {}
+    private JDBCHelper() {
+    }
 
     public static Statement getStatement() throws Exception {
         Connection connection = getConnection();

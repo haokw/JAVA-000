@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>com.hongyuchang</groupId>
+	<groupId>com.hao</groupId>
 	<artifactId>generate-million-record</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>generate-million-record</name>
